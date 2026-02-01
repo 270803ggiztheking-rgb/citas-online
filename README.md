@@ -2,93 +2,107 @@
 
 # 📅 Sistema de Citas Online
 
-Sistema completo para gestión de citas y reservaciones. Ideal para consultorios médicos, dentales, estéticas, y cualquier negocio que maneje citas.
+Sistema completo para gestión de citas y reservaciones. **Instalable en celular como app.**
 
 ![Python](https://img.shields.io/badge/Python-3.9+-blue)
 ![FastAPI](https://img.shields.io/badge/FastAPI-0.109+-green)
+![PWA](https://img.shields.io/badge/PWA-Ready-purple)
 ![License](https://img.shields.io/badge/License-MIT-yellow)
+
+## 📱 Instalar en Celular
+
+1. Abre el sitio en Chrome (Android) o Safari (iOS)
+2. Toca el menú de 3 puntos → **"Agregar a pantalla de inicio"**
+3. ¡Listo! Tendrás la app en tu celular
 
 ## ✨ Características
 
 - 🗓️ **Reservación online 24/7** - Clientes agendan sin llamar
-- 📱 **100% Responsive** - Funciona en móvil y desktop
+- 📱 **Instalable como App** - PWA para Android e iOS
+- 💬 **Chatbot integrado** - Responde preguntas automáticamente
 - ⚡ **Confirmación instantánea** - Sin esperas
 - 🔧 **Multi-servicio** - Define servicios con precios y duración
-- 📊 **Panel de administración** - Gestiona todas las citas
-- 🚫 **Prevención de doble reserva** - Sistema inteligente de slots
+- 🚫 **Prevención de doble reserva** - Sistema inteligente
 
-## 🚀 Demo Rápido
+## 🚀 Inicio Rápido (3 pasos)
 
 ```bash
-# Clonar repositorio
+# 1. Clonar
 git clone https://github.com/270803ggiztheking-rgb/citas-online.git
 cd citas-online
 
-# Instalar dependencias
+# 2. Instalar
 pip install -r requirements.txt
 
-# Iniciar servidor
+# 3. Ejecutar
 uvicorn src.main:app --reload
-
-# Abrir navegador
-# http://localhost:8000
 ```
 
-## 📖 Uso
+Abre **<http://localhost:8000>** y listo.
 
-### 1. Crear Demo
+## 🔌 Integración Simple
 
-Visita `http://localhost:8000` y haz clic en "Crear Demo" para generar un consultorio de ejemplo.
+### Embed en tu sitio web (1 línea)
 
-### 2. Agendar Cita
+```html
+<iframe src="https://tu-dominio.com/book/tu-negocio" width="100%" height="600"></iframe>
+```
 
-Navega a `/book/demo-consultorio` para probar el flujo de reservación.
+### Widget flotante
 
-### 3. API Endpoints
+```html
+<script src="https://tu-dominio.com/static/embed.js" data-business="tu-negocio"></script>
+```
+
+### API para tu app
+
+```python
+import requests
+
+# Obtener horarios disponibles
+response = requests.get("https://tu-dominio.com/api/businesses/1/available-times?date_str=2024-02-01&service_id=1")
+horarios = response.json()["available_times"]
+
+# Crear cita
+cita = requests.post("https://tu-dominio.com/api/businesses/1/appointments", json={
+    "service_id": 1,
+    "client_name": "Juan",
+    "client_email": "juan@email.com",
+    "appointment_date": "2024-02-01",
+    "appointment_time": "10:00"
+})
+```
+
+## 📖 API Endpoints
 
 | Método | Endpoint | Descripción |
-|--------|----------|-------------|
+| ------ | -------- | ----------- |
 | POST | `/api/businesses` | Crear negocio |
 | GET | `/api/businesses/{id}/services` | Listar servicios |
 | GET | `/api/businesses/{id}/available-times` | Horarios disponibles |
 | POST | `/api/businesses/{id}/appointments` | Crear cita |
 | GET | `/api/businesses/{id}/appointments` | Listar citas |
 
-## 🏗️ Estructura
-
-```
-citas-online/
-├── src/
-│   └── main.py          # FastAPI application
-├── templates/
-│   ├── index.html       # Landing page
-│   └── booking.html     # Booking interface
-├── static/
-│   └── css/
-│       └── styles.css   # Styles
-├── requirements.txt
-└── README.md
-```
-
 ## 💼 Casos de Uso
 
-- **Consultorios médicos** - Citas con doctores
-- **Dentistas** - Agendar tratamientos
-- **Estéticas/Spa** - Reservar servicios
-- **Barberías** - Turnos de corte
-- **Consultorías** - Asesorías profesionales
+- Consultorios médicos y dentales
+- Estéticas, spas y barberías
+- Consultorías y asesorías
+- Cualquier negocio con citas
 
-## 🛠️ Personalización
+## 🎨 Personalización
 
-El sistema es fácilmente personalizable:
-
-- Modifica `static/css/styles.css` para cambiar colores/diseño
-- Edita `templates/` para agregar logo y branding
-- Usa la API para integrar con tu software existente
+```css
+/* Cambiar colores en static/css/styles.css */
+:root {
+    --primary: #6366f1;      /* Tu color principal */
+    --background: #0f172a;   /* Fondo oscuro */
+}
+```
 
 ## 📄 Licencia
 
-MIT License
+MIT License - Úsalo libremente en proyectos comerciales.
 
 ## 👤 Autor
 
@@ -98,4 +112,4 @@ Freelance Developer & Automation Specialist
 
 ---
 
-¿Necesitas este sistema para tu negocio? **Contáctame para una implementación personalizada.**
+**¿Lo quieres para tu negocio?** Contáctame para implementación personalizada.
