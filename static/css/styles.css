@@ -139,7 +139,8 @@ body {
 }
 
 /* Sections */
-.demo-section, .business-section {
+.demo-section,
+.business-section {
     background: var(--surface);
     padding: 40px;
     border-radius: var(--radius);
@@ -148,11 +149,13 @@ body {
     border: 1px solid var(--border);
 }
 
-.demo-section h2, .business-section h2 {
+.demo-section h2,
+.business-section h2 {
     margin-bottom: 10px;
 }
 
-.demo-section p, .business-section p {
+.demo-section p,
+.business-section p {
     color: var(--text-muted);
     margin-bottom: 20px;
 }
@@ -222,7 +225,7 @@ body {
 .step-number {
     width: 24px;
     height: 24px;
-    background: rgba(255,255,255,0.2);
+    background: rgba(255, 255, 255, 0.2);
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -299,7 +302,8 @@ body {
     }
 }
 
-.date-picker label, .time-picker label {
+.date-picker label,
+.time-picker label {
     display: block;
     margin-bottom: 10px;
     font-weight: 600;
@@ -341,7 +345,8 @@ body {
     border-color: var(--primary);
 }
 
-.no-slots, .hint {
+.no-slots,
+.hint {
     color: var(--text-muted);
     text-align: center;
     padding: 20px;
@@ -363,7 +368,8 @@ body {
     font-weight: 500;
 }
 
-.form-group input, .form-group textarea {
+.form-group input,
+.form-group textarea {
     width: 100%;
     padding: 12px;
     background: var(--surface);
@@ -373,7 +379,8 @@ body {
     font-size: 1rem;
 }
 
-.form-group input:focus, .form-group textarea:focus {
+.form-group input:focus,
+.form-group textarea:focus {
     outline: none;
     border-color: var(--primary);
 }
@@ -454,4 +461,135 @@ footer a {
 
 footer a:hover {
     text-decoration: underline;
+}
+
+/* Chatbot Widget */
+.chatbot-widget {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
+}
+
+.chat-toggle {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: var(--primary);
+    border: none;
+    font-size: 1.8rem;
+    cursor: pointer;
+    box-shadow: var(--shadow);
+    transition: transform 0.2s ease;
+}
+
+.chat-toggle:hover {
+    transform: scale(1.1);
+}
+
+.chat-window {
+    position: absolute;
+    bottom: 70px;
+    right: 0;
+    width: 320px;
+    height: 400px;
+    background: var(--surface);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.chat-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 15px;
+    background: var(--primary);
+    color: white;
+}
+
+.chat-header button {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.2rem;
+    cursor: pointer;
+}
+
+.chat-messages {
+    flex: 1;
+    padding: 15px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.bot-message,
+.user-message {
+    padding: 10px 14px;
+    border-radius: 15px;
+    max-width: 85%;
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+.bot-message {
+    background: var(--surface-light);
+    align-self: flex-start;
+    border-bottom-left-radius: 4px;
+}
+
+.user-message {
+    background: var(--primary);
+    align-self: flex-end;
+    border-bottom-right-radius: 4px;
+}
+
+.chat-input {
+    display: flex;
+    padding: 10px;
+    background: var(--background);
+    border-top: 1px solid var(--border);
+}
+
+.chat-input input {
+    flex: 1;
+    padding: 10px 12px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    color: var(--text);
+    font-size: 0.9rem;
+}
+
+.chat-input input:focus {
+    outline: none;
+    border-color: var(--primary);
+}
+
+.chat-input button {
+    width: 40px;
+    height: 40px;
+    margin-left: 8px;
+    background: var(--primary);
+    border: none;
+    border-radius: 50%;
+    color: white;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+.chat-input button:hover {
+    filter: brightness(1.1);
+}
+
+@media (max-width: 400px) {
+    .chat-window {
+        width: calc(100vw - 40px);
+        right: -10px;
+    }
 }

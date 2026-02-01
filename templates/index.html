@@ -1,11 +1,22 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistema de Citas Online</title>
+
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#6366f1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Citas">
+    <link rel="apple-touch-icon" href="/static/icons/icon-192.png">
+    <link rel="manifest" href="/static/manifest.json">
+
     <link rel="stylesheet" href="/static/css/styles.css">
 </head>
+
 <body>
     <div class="container">
         <header class="hero">
@@ -54,7 +65,8 @@
         </main>
 
         <footer>
-            <p>Desarrollado con ❤️ por <a href="https://github.com/270803ggiztheking-rgb" target="_blank">Gael Chulim</a></p>
+            <p>Desarrollado con ❤️ por <a href="https://github.com/270803ggiztheking-rgb" target="_blank">Gael
+                    Chulim</a></p>
         </footer>
     </div>
 
@@ -63,11 +75,11 @@
             const btn = document.getElementById('setup-demo-btn');
             btn.disabled = true;
             btn.textContent = 'Creando demo...';
-            
+
             try {
                 const response = await fetch('/api/setup-demo', { method: 'POST' });
                 const data = await response.json();
-                
+
                 btn.textContent = '✅ Demo creado';
                 document.getElementById('demo-link').style.display = 'inline-block';
             } catch (error) {
@@ -75,6 +87,61 @@
                 btn.disabled = false;
             }
         });
+
+        // Register Service Worker for PWA
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/static/sw.js')
+                .then(reg => console.log('SW registered'))
+                .catch(err => console.log('SW error:', err));
+        }
+    </script>
+
+    <!-- Chatbot Widget -->
+    <div id="chatbot-widget" class="chatbot-widget">
+        <button id="chat-toggle" class="chat-toggle" onclick="toggleChat()">💬</button>
+        <div id="chat-window" class="chat-window" style="display: none;">
+            <div class="chat-header">
+                <span>🤖 Asistente</span>
+                <button onclick="toggleChat()">✕</button>
+            </div>
+            <div id="chat-messages" class="chat-messages">
+                <div class="bot-message">¡Hola! 👋 ¿En qué puedo ayudarte?</div>
+            </div>
+            <div class="chat-input">
+                <input type="text" id="chat-input" placeholder="Escribe tu pregunta..."
+                    onkeypress="if(event.key==='Enter')sendMessage()">
+                <button onclick="sendMessage()">➤</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleChat() {
+            const win = document.getElementById('chat-window');
+            win.style.display = win.style.display === 'none' ? 'flex' : 'none';
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('chat-input');
+            const messages = document.getElementById('chat-messages');
+            const msg = input.value.trim();
+            if (!msg) return;
+
+            messages.innerHTML += `<div class="user-message">${msg}</div>`;
+            input.value = '';
+
+            setTimeout(() => {
+                const lower = msg.toLowerCase();
+                let response = '🤔 No entendí. Puedo ayudarte con: agendar citas, precios, horarios.';
+                if (lower.includes('cita') || lower.includes('agendar')) response = '📅 Haz clic en "Ir a Agendar Cita" para reservar.';
+                if (lower.includes('precio') || lower.includes('costo')) response = '💰 Los precios varían según el servicio.';
+                if (lower.includes('horario')) response = '🕐 Lunes-Viernes: 9-18h, Sábado: 9-14h';
+                if (lower.includes('hola')) response = '¡Hola! 😊 ¿En qué puedo ayudarte?';
+                messages.innerHTML += `<div class="bot-message">${response}</div>`;
+                messages.scrollTop = messages.scrollHeight;
+            }, 500);
+        }
     </script>
 </body>
+
 </html>

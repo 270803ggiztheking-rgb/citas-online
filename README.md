@@ -1,3 +1,5 @@
+![Sistema de Citas Online](banner.png)
+
 # 📅 Sistema de Citas Online
 
 Sistema completo para gestión de citas y reservaciones. Ideal para consultorios médicos, dentales, estéticas, y cualquier negocio que maneje citas.
