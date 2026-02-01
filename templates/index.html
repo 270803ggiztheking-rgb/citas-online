@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Citas Online</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body>
+    <div class="container">
+        <header class="hero">
+            <h1>📅 Sistema de Citas Online</h1>
+            <p>Agenda tu cita de forma rápida y sencilla</p>
+        </header>
+
+        <main class="main-content">
+            <section class="features">
+                <div class="feature-card">
+                    <div class="feature-icon">🗓️</div>
+                    <h3>Agenda 24/7</h3>
+                    <p>Reserva tu cita en cualquier momento, desde cualquier dispositivo</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <h3>Confirmación Instantánea</h3>
+                    <p>Recibe confirmación inmediata de tu reservación</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔔</div>
+                    <h3>Recordatorios</h3>
+                    <p>Te enviamos recordatorios antes de tu cita</p>
+                </div>
+            </section>
+
+            <section class="demo-section">
+                <h2>¿Quieres probarlo?</h2>
+                <p>Prueba nuestro sistema con un consultorio de demostración</p>
+                <button id="setup-demo-btn" class="btn btn-primary">
+                    🚀 Crear Demo
+                </button>
+                <a href="/book/demo-consultorio" class="btn btn-secondary" id="demo-link" style="display: none;">
+                    📅 Ir a Agendar Cita
+                </a>
+            </section>
+
+            <section class="business-section">
+                <h2>¿Tienes un negocio?</h2>
+                <p>Implementa este sistema en tu consultorio, estética, o cualquier negocio que maneje citas.</p>
+                <div class="contact-info">
+                    <p><strong>Contacto:</strong> Gael L. Chulim G.</p>
+                    <p>📧 Freelance Developer & Automation Specialist</p>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <p>Desarrollado con ❤️ por <a href="https://github.com/270803ggiztheking-rgb" target="_blank">Gael Chulim</a></p>
+        </footer>
+    </div>
+
+    <script>
+        document.getElementById('setup-demo-btn').addEventListener('click', async () => {
+            const btn = document.getElementById('setup-demo-btn');
+            btn.disabled = true;
+            btn.textContent = 'Creando demo...';
+            
+            try {
+                const response = await fetch('/api/setup-demo', { method: 'POST' });
+                const data = await response.json();
+                
+                btn.textContent = '✅ Demo creado';
+                document.getElementById('demo-link').style.display = 'inline-block';
+            } catch (error) {
+                btn.textContent = 'Error - Intenta de nuevo';
+                btn.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>

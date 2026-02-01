@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agendar Cita - {{ business.name }}</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+
+<body>
+    <div class="container">
+        <header class="business-header">
+            <a href="/" class="back-link">← Volver</a>
+            <h1>{{ business.name }}</h1>
+            <p class="business-description">{{ business.description }}</p>
+            <div class="business-info">
+                <span>📍 {{ business.address }}</span>
+                <span>📞 {{ business.phone }}</span>
+            </div>
+        </header>
+
+        <main class="booking-container">
+            <div class="booking-steps">
+                <div class="step active" data-step="1">
+                    <span class="step-number">1</span>
+                    <span class="step-label">Servicio</span>
+                </div>
+                <div class="step" data-step="2">
+                    <span class="step-number">2</span>
+                    <span class="step-label">Fecha y Hora</span>
+                </div>
+                <div class="step" data-step="3">
+                    <span class="step-number">3</span>
+                    <span class="step-label">Datos</span>
+                </div>
+                <div class="step" data-step="4">
+                    <span class="step-number">4</span>
+                    <span class="step-label">Confirmar</span>
+                </div>
+            </div>
+
+            <!-- Step 1: Select Service -->
+            <section id="step-1" class="booking-step">
+                <h2>Selecciona un Servicio</h2>
+                <div id="services-list" class="services-grid">
+                    <!-- Services loaded via JS -->
+                </div>
+            </section>
+
+            <!-- Step 2: Select Date & Time -->
+            <section id="step-2" class="booking-step" style="display: none;">
+                <h2>Selecciona Fecha y Hora</h2>
+                <div class="date-time-container">
+                    <div class="date-picker">
+                        <label for="appointment-date">Fecha:</label>
+                        <input type="date" id="appointment-date" min="">
+                    </div>
+                    <div class="time-picker">
+                        <label>Horarios disponibles:</label>
+                        <div id="time-slots" class="time-slots-grid">
+                            <p class="hint">Selecciona una fecha primero</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="step-navigation">
+                    <button class="btn btn-secondary" onclick="goToStep(1)">← Anterior</button>
+                </div>
+            </section>
+
+            <!-- Step 3: Client Info -->
+            <section id="step-3" class="booking-step" style="display: none;">
+                <h2>Tus Datos</h2>
+                <form id="client-form" class="client-form">
+                    <div class="form-group">
+                        <label for="client-name">Nombre completo *</label>
+                        <input type="text" id="client-name" required placeholder="Ej: Juan Pérez">
+                    </div>
+                    <div class="form-group">
+                        <label for="client-email">Email *</label>
+                        <input type="email" id="client-email" required placeholder="tu@email.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="client-phone">Teléfono</label>
+                        <input type="tel" id="client-phone" placeholder="+52 999 123 4567">
+                    </div>
+                    <div class="form-group">
+                        <label for="client-notes">Notas adicionales</label>
+                        <textarea id="client-notes" rows="3" placeholder="¿Algo que debamos saber?"></textarea>
+                    </div>
+                </form>
+                <div class="step-navigation">
+                    <button class="btn btn-secondary" onclick="goToStep(2)">← Anterior</button>
+                    <button class="btn btn-primary" onclick="goToStep(4)">Continuar →</button>
+                </div>
+            </section>
+
+            <!-- Step 4: Confirmation -->
+            <section id="step-4" class="booking-step" style="display: none;">
+                <h2>Confirma tu Cita</h2>
+                <div class="confirmation-summary">
+                    <div class="summary-item">
+                        <span class="label">Servicio:</span>
+                        <span id="summary-service" class="value"></span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="label">Fecha:</span>
+                        <span id="summary-date" class="value"></span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="label">Hora:</span>
+                        <span id="summary-time" class="value"></span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="label">Nombre:</span>
+                        <span id="summary-name" class="value"></span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="label">Email:</span>
+                        <span id="summary-email" class="value"></span>
+                    </div>
+                </div>
+                <div class="step-navigation">
+                    <button class="btn btn-secondary" onclick="goToStep(3)">← Anterior</button>
+                    <button class="btn btn-success" id="confirm-btn" onclick="confirmBooking()">
+                        ✅ Confirmar Cita
+                    </button>
+                </div>
+            </section>
+
+            <!-- Success Message -->
+            <section id="success-message" class="booking-step" style="display: none;">
+                <div class="success-container">
+                    <div class="success-icon">🎉</div>
+                    <h2>¡Cita Agendada!</h2>
+                    <p>Tu cita ha sido reservada exitosamente.</p>
+                    <p>Te enviaremos un recordatorio a tu email.</p>
+                    <a href="/" class="btn btn-primary">Volver al Inicio</a>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        const businessId = {{ business.id }};
+        let selectedService = null;
+        let selectedDate = null;
+        let selectedTime = null;
+
+        // Load services on page load
+        document.addEventListener('DOMContentLoaded', loadServices);
+
+        async function loadServices() {
+            const response = await fetch(`/api/businesses/${businessId}/services`);
+            const services = await response.json();
+
+            const container = document.getElementById('services-list');
+            container.innerHTML = services.map(service => `
+                <div class="service-card" onclick="selectService(${service.id}, '${service.name}', ${service.duration_minutes}, ${service.price || 0})">
+                    <h3>${service.name}</h3>
+                    <p>${service.description || ''}</p>
+                    <div class="service-meta">
+                        <span>⏱️ ${service.duration_minutes} min</span>
+                        ${service.price ? `<span class="price">$${service.price}</span>` : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function selectService(id, name, duration, price) {
+            selectedService = { id, name, duration, price };
+            document.querySelectorAll('.service-card').forEach(c => c.classList.remove('selected'));
+            event.currentTarget.classList.add('selected');
+
+            // Set min date to today
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('appointment-date').min = today;
+
+            goToStep(2);
+        }
+
+        document.getElementById('appointment-date').addEventListener('change', async (e) => {
+            selectedDate = e.target.value;
+            await loadAvailableTimes();
+        });
+
+        async function loadAvailableTimes() {
+            const container = document.getElementById('time-slots');
+            container.innerHTML = '<p>Cargando horarios...</p>';
+
+            const response = await fetch(
+                `/api/businesses/${businessId}/available-times?date_str=${selectedDate}&service_id=${selectedService.id}`
+            );
+            const data = await response.json();
+
+            if (data.available_times.length === 0) {
+                container.innerHTML = '<p class="no-slots">No hay horarios disponibles para esta fecha</p>';
+                return;
+            }
+
+            container.innerHTML = data.available_times.map(time => `
+                <button class="time-slot" onclick="selectTime('${time}')">${time}</button>
+            `).join('');
+        }
+
+        function selectTime(time) {
+            selectedTime = time;
+            document.querySelectorAll('.time-slot').forEach(s => s.classList.remove('selected'));
+            event.currentTarget.classList.add('selected');
+            goToStep(3);
+        }
+
+        function goToStep(step) {
+            // Hide all steps
+            document.querySelectorAll('.booking-step').forEach(s => s.style.display = 'none');
+            document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+
+            // Show target step
+            document.getElementById(`step-${step}`).style.display = 'block';
+            document.querySelector(`.step[data-step="${step}"]`).classList.add('active');
+
+            // Update summary on step 4
+            if (step === 4) {
+                document.getElementById('summary-service').textContent = selectedService.name;
+                document.getElementById('summary-date').textContent = formatDate(selectedDate);
+                document.getElementById('summary-time').textContent = selectedTime;
+                document.getElementById('summary-name').textContent = document.getElementById('client-name').value;
+                document.getElementById('summary-email').textContent = document.getElementById('client-email').value;
+            }
+        }
+
+        function formatDate(dateStr) {
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            return new Date(dateStr + 'T00:00:00').toLocaleDateString('es-MX', options);
+        }
+
+        async function confirmBooking() {
+            const btn = document.getElementById('confirm-btn');
+            btn.disabled = true;
+            btn.textContent = 'Procesando...';
+
+            const data = {
+                service_id: selectedService.id,
+                client_name: document.getElementById('client-name').value,
+                client_email: document.getElementById('client-email').value,
+                client_phone: document.getElementById('client-phone').value,
+                appointment_date: selectedDate,
+                appointment_time: selectedTime,
+                notes: document.getElementById('client-notes').value
+            };
+
+            try {
+                const response = await fetch(`/api/businesses/${businessId}/appointments`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                if (response.ok) {
+                    document.querySelectorAll('.booking-step').forEach(s => s.style.display = 'none');
+                    document.getElementById('success-message').style.display = 'block';
+                } else {
+                    const error = await response.json();
+                    alert(error.detail || 'Error al agendar la cita');
+                    btn.disabled = false;
+                    btn.textContent = '✅ Confirmar Cita';
+                }
+            } catch (error) {
+                alert('Error de conexión');
+                btn.disabled = false;
+                btn.textContent = '✅ Confirmar Cita';
+            }
+        }
+    </script>
+</body>
+
+</html>
